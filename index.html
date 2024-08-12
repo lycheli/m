@@ -81,7 +81,9 @@ function renderFromURL(){
 }
 
 window.onload=function(){
-  window.location.search.includes('data=') && renderFromURL();
+  if(window.location.search.includes('data=')){
+    renderFromURL();
+  }
 };
 </script>
 </body>
