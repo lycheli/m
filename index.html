@@ -39,51 +39,49 @@ a:hover { color: #5a9bd4; }
         <iframe id="preview" style="width:100%; height:300px; border: none;"></iframe>
       </div>
     </div>
-    <div id="viewOnlySection" class="hidden">
-      <div id="markdownViewer" class="markdown-viewer"></div>
-      <div class="control">
-        <button class="button is-primary" onclick="window.history.back()">Share</button>
-      </div>
-    </div>
+    <div id="markdownViewer" class="hidden markdown-viewer"></div>
   </div>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 function generateLink(){
-const markdown=document.getElementById('markdownInput').value;
-const encodedMarkdown=encodeURIComponent(markdown);
-const url=`${window.location.href}?data=${encodedMarkdown}`;
-if(markdown.trim()){
-document.getElementById('result').innerHTML=`Share this link: <a href="${url}" target="_blank">${url}</a>`;
-document.getElementById('result').style.display='block'
-}else{
-document.getElementById('result').style.display='none'
+  const markdown=document.getElementById('markdownInput').value;
+  const encodedMarkdown=encodeURIComponent(markdown);
+  const url=`${window.location.href}?data=${encodedMarkdown}`;
+  if(markdown.trim()){
+    document.getElementById('result').innerHTML=`Share this link: <a href="${url}" target="_blank">${url}</a>`;
+    document.getElementById('result').style.display='block';
+  } else {
+    document.getElementById('result').style.display='none';
+  }
+  const htmlContent=marked.parse(markdown);
+  const preview=document.getElementById('preview');
+  preview.contentDocument.open();
+  preview.contentDocument.write(`
+    <html>
+    <head>
+      <style>
+        body{background-color:#ffffff;color:#333;padding:1rem;}h1,h2,h3,h4,h5,h6{color:#333;}a{color:#3273dc;}a:hover{color:#5a9bd4;}
+      </style>
+    </head>
+    <body>${htmlContent}</body>
+    </html>
+  `);
+  preview.contentDocument.close();
 }
-const htmlContent=marked.parse(markdown);
-const preview=document.getElementById('preview');
-preview.contentDocument.open();
-preview.contentDocument.write(`
-<html>
-<head>
-<style>
-body{background-color:#ffffff;color:#333;padding:1rem;}h1,h2,h3,h4,h5,h6{color:#333;}a{color:#3273dc;}a:hover{color:#5a9bd4;}
-</style>
-</head>
-<body>${htmlContent}</body>
-</html>
-`);
-preview.contentDocument.close()
-}
+
 function renderFromURL(){
-const params=new URLSearchParams(window.location.search);
-const markdown=params.get('data');
-if(markdown){
-document.getElementById('editorSection').classList.add('hidden');
-document.getElementById('viewOnlySection').classList.remove('hidden');
-document.getElementById('markdownViewer').innerHTML=marked.parse(decodeURIComponent(markdown))
-}}
+  const params=new URLSearchParams(window.location.search);
+  const markdown=params.get('data');
+  if(markdown){
+    document.getElementById('editorSection').classList.add('hidden');
+    document.getElementById('markdownViewer').classList.remove('hidden');
+    document.getElementById('markdownViewer').innerHTML=marked.parse(decodeURIComponent(markdown));
+  }
+}
+
 window.onload=function(){
-window.location.search.includes('data=')&&renderFromURL()
+  window.location.search.includes('data=') && renderFromURL();
 };
 </script>
 </body>
